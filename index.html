@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Josh — Software Developer & IT Security Researcher</title>
+<meta name="description" content="Josh Münte builds full-stack products and takes them apart. 7+ years across TypeScript, Rust, Go, Solidity and EVM internals — with an offensive security edge.">
+<meta name="theme-color" content="#070a0d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23070a0d'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='16' fill='%23ff6b35' text-anchor='middle'%3E%24_%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- fixed 3D scene -->
+<canvas id="scene" aria-hidden="true"></canvas>
+<div id="grain" aria-hidden="true"></div>
+
+<!-- left depth rail -->
+<aside id="rail" aria-hidden="true">
+  <div class="rail-track">
+    <div class="rail-fill" id="rail-fill"></div>
+    <span class="rail-dot" id="rail-dot"></span>
+  </div>
+</aside>
+
+<header id="topbar">
+  <a class="brand" href="#top">
+    <span class="brand-mark">▙</span>
+    <span class="brand-name">josh<span class="brand-cursor">_</span></span>
+  </a>
+  <nav>
+    <a href="#profile">profile</a>
+    <a href="#experience">experience</a>
+    <a href="#security">security</a>
+    <a href="#opensource">open&nbsp;source</a>
+    <a href="#stack">stack</a>
+  </nav>
+  <a class="topbar-cta" href="#contact">get in touch</a>
+</header>
+
+<main id="top">
+
+  <!-- ══════════ HERO ══════════ -->
+  <section class="hero" id="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow mono">// software developer · it security researcher</p>
+      <h1 class="hero-title">
+        <span class="line">I build systems.</span>
+        <span class="line line-2">Then I take them <em>apart</em>.</span>
+      </h1>
+      <p class="hero-sub">
+        Seven-plus years shipping full-stack products — TypeScript, Rust, Go, Solidity —
+        and breaking the ones that deserve it. Security Champion, MEV bot author,
+        responsible-disclosure practitioner.
+      </p>
+      <div class="hero-terminal mono" id="terminal">
+        <div class="term-bar">
+          <span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span>
+          <span class="term-title">josh@dev — whoami</span>
+        </div>
+        <div class="term-body" id="term-body"></div>
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn-solid" href="#experience">trace the stack ↓</a>
+        <a class="btn btn-ghost" href="https://github.com/jjoshm" target="_blank" rel="noopener">github.com/jjoshm ↗</a>
+      </div>
+    </div>
+    <div class="scroll-hint mono" aria-hidden="true">
+      <span>scroll to descend</span>
+      <span class="hint-arrow">▾</span>
+    </div>
+  </section>
+
+  <!-- ══════════ PROFILE ══════════ -->
+  <section class="section" id="profile">
+    <div class="section-head reveal">
+      <span class="sec-index mono">01</span>
+      <h2>Profile</h2>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="profile-grid">
+      <div class="reveal">
+        <p class="lead">
+          I'm Josh — a developer who thinks like an attacker and an attacker who ships like a developer.
+          Most of my career I've built enterprise platforms end to end: architecture, frontend, backend,
+          pipelines, production. The rest of the time I've been on the other side of the same systems —
+          testing web applications, reviewing code, reversing firmware, and reporting what I find
+          through responsible disclosure.
+        </p>
+        <p>
+          The two halves feed each other. Building a DeFi platform to <strong>$10M peak TVL</strong> with a
+          lean team taught me what auditors actually look for; finding account takeovers and data exposure
+          in production systems taught me how to build so those classes of bugs never make it out the door.
+        </p>
+      </div>
+      <div class="stat-stack">
+        <div class="stat reveal"><span class="stat-num mono">7+</span><span class="stat-label">years shipping production software</span></div>
+        <div class="stat reveal"><span class="stat-num mono">$10M</span><span class="stat-label">peak TVL on a DeFi platform I co-built</span></div>
+        <div class="stat reveal"><span class="stat-num mono">4</span><span class="stat-label">vuln classes found &amp; responsibly disclosed</span></div>
+        <div class="stat reveal"><span class="stat-num mono">9k+</span><span class="stat-label">community grown around a product I ran</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ EXPERIENCE ══════════ -->
+  <section class="section" id="experience">
+    <div class="section-head reveal">
+      <span class="sec-index mono">02</span>
+      <h2>Experience</h2>
+      <span class="sec-rule"></span>
+    </div>
+    <ol class="timeline">
+      <li class="tl-item reveal">
+        <div class="tl-when mono">2025 — now</div>
+        <div class="tl-card">
+          <h3>Founder &amp; Engineer <span class="tl-org">· independent venture</span></h3>
+          <p>
+            Co-built and operated a production-grade DeFi platform end to end with a 2–5 person team:
+            React frontend, backend services, smart contracts, infrastructure. Worked directly with
+            external security auditors to harden the platform and drive remediation.
+          </p>
+          <ul class="tl-points">
+            <li>Smart contracts underpinning core product logic — ~$10M peak total value managed</li>
+            <li>Owned the full delivery lifecycle: CI/CD, observability, database design, operations</li>
+            <li>Grew an engaged community past 9,000 members while keeping the platform live</li>
+          </ul>
+          <div class="chips mono"><span>Solidity</span><span>Foundry</span><span>React</span><span>EVM</span><span>security audits</span></div>
+        </div>
+      </li>
+      <li class="tl-item reveal">
+        <div class="tl-when mono">2024</div>
+        <div class="tl-card">
+          <h3>Senior Software Engineer <span class="tl-org">· ESG analytics SaaS</span></h3>
+          <p>
+            Frontend modernization of a legacy enterprise platform inside a ~10-engineer team —
+            the Angular/TypeScript rewrite, complex analytics workflows for enterprise customers,
+            plus backend features in PHP and Symfony.
+          </p>
+          <div class="chips mono"><span>Angular</span><span>TypeScript</span><span>PHP</span><span>Symfony</span></div>
+        </div>
+      </li>
+      <li class="tl-item reveal">
+        <div class="tl-when mono">2022 — 2023</div>
+        <div class="tl-card">
+          <h3>Software Engineer &amp; Security Champion <span class="tl-org">· travel &amp; booking platforms</span></h3>
+          <p>
+            Enterprise applications for customer-facing booking systems — Angular, reusable React
+            Web Components, REST API integrations, Azure DevOps pipelines. Took on security
+            reviews, threat identification and remediation across customer-facing systems.
+          </p>
+          <div class="chips mono"><span>Angular</span><span>React</span><span>Python</span><span>Azure DevOps</span><span>secure SDLC</span></div>
+        </div>
+      </li>
+      <li class="tl-item reveal">
+        <div class="tl-when mono">2018 — 2021</div>
+        <div class="tl-card">
+          <h3>Fullstack Engineer <span class="tl-org">· digital commerce agency</span></h3>
+          <p>
+            Enterprise e-commerce for B2B/B2C clients — Magento 2 and Shopware implementations,
+            custom Angular/React frontends, platform migrations with zero data loss. Replaced
+            ORM-heavy hot paths with optimized SQL and made critical queries fast again.
+          </p>
+          <div class="chips mono"><span>Magento 2</span><span>Shopware</span><span>SQL</span><span>React</span></div>
+        </div>
+      </li>
+      <li class="tl-item reveal">
+        <div class="tl-when mono">2021</div>
+        <div class="tl-card">
+          <h3>IT Specialist — Application Development <span class="tl-org">· certified, Germany</span></h3>
+          <p>Formal apprenticeship track (Fachinformatiker Anwendungsentwicklung), graduated 2021.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ══════════ SECURITY ══════════ -->
+  <section class="section" id="security">
+    <div class="section-head reveal">
+      <span class="sec-index mono">03</span>
+      <h2>Security work</h2>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="sec-grid">
+      <div class="reveal">
+        <p class="lead">
+          Offensive security is where my engineering background pays off: I read the code before
+          I poke the endpoint. Web application testing, secure code review, binary and firmware
+          work — always with an eye on impact and remediation, not leaderboard points.
+        </p>
+        <div class="vuln-list">
+          <div class="vuln reveal">
+            <span class="vuln-sev mono">HIGH</span>
+            <div><h4>Account takeover</h4><p>Authentication-flow flaws chained into full account compromise on production systems.</p></div>
+          </div>
+          <div class="vuln reveal">
+            <span class="vuln-sev mono">HIGH</span>
+            <div><h4>Sensitive data exposure</h4><p>Endpoints and responses leaking data they should never have — found, reported, fixed.</p></div>
+          </div>
+          <div class="vuln reveal">
+            <span class="vuln-sev mono">MED</span>
+            <div><h4>Cross-site scripting</h4><p>Stored and reflected XSS in customer-facing applications, with working PoCs.</p></div>
+          </div>
+          <div class="vuln reveal">
+            <span class="vuln-sev mono">MED</span>
+            <div><h4>Subdomain takeover</h4><p>Dangling infrastructure claimed before someone less friendly did.</p></div>
+          </div>
+        </div>
+        <p class="disclosure-note mono reveal">
+          → every finding reported through responsible disclosure · coordinated with vendors until patched
+        </p>
+      </div>
+      <div class="sec-side">
+        <div class="sec-card reveal">
+          <h4 class="mono">// web &amp; application</h4>
+          <ul>
+            <li>OWASP Top 10 — testing &amp; remediation</li>
+            <li>Burp Suite &amp; recon tooling</li>
+            <li>Secure code review (TS, PHP, Java, Solidity)</li>
+            <li>Threat modeling &amp; secure SDLC</li>
+          </ul>
+        </div>
+        <div class="sec-card reveal">
+          <h4 class="mono">// low level</h4>
+          <ul>
+            <li>Binary analysis &amp; low-level debugging</li>
+            <li>Firmware reverse engineering</li>
+            <li>Fuzzing &amp; crash triage</li>
+          </ul>
+        </div>
+        <div class="sec-card sec-card-accent reveal">
+          <h4 class="mono">// on-chain</h4>
+          <ul>
+            <li>Smart-contract security review</li>
+            <li>MEV &amp; keeper-bot economics</li>
+            <li>Collaboration with external auditors</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ OPEN SOURCE ══════════ -->
+  <section class="section" id="opensource">
+    <div class="section-head reveal">
+      <span class="sec-index mono">04</span>
+      <h2>Open source</h2>
+      <span class="sec-rule"></span>
+    </div>
+    <p class="section-intro reveal">
+      A selection from <a href="https://github.com/jjoshm" target="_blank" rel="noopener">github.com/jjoshm</a> —
+      the public slice of what I build. Client work and current research stay private.
+    </p>
+    <div class="repo-grid">
+      <a class="repo reveal" href="https://github.com/jjoshm/Lyris" target="_blank" rel="noopener">
+        <div class="repo-top mono"><span class="repo-lang lang-dart">Dart</span></div>
+        <h3>Lyris</h3>
+        <p>100% offline period &amp; cycle tracker built with Flutter — local-only SQLite storage, no accounts, no cloud. Clue-inspired prediction engine with recency-weighted cycle modeling and a read-only partner mode over local WiFi.</p>
+        <span class="repo-link mono">source ↗</span>
+      </a>
+      <a class="repo reveal" href="https://github.com/jjoshm/olympusdao-clearinghouse-bot" target="_blank" rel="noopener">
+        <div class="repo-top mono"><span class="repo-lang lang-rust">Rust</span><span class="repo-stars">★ 2</span></div>
+        <h3>olympusdao-clearinghouse-bot</h3>
+        <p>MEV keeper bot for OlympusDAO's Clearinghouse — mempool-aware, latency-sensitive, built on the Artemis framework.</p>
+        <span class="repo-link mono">source ↗</span>
+      </a>
+      <a class="repo reveal" href="https://github.com/jjoshm/olympusdao-heartbeat-bot" target="_blank" rel="noopener">
+        <div class="repo-top mono"><span class="repo-lang lang-rust">Rust</span><span class="repo-stars">★ 1</span></div>
+        <h3>olympusdao-heartbeat-bot</h3>
+        <p>Keeper bot keeping protocol heartbeats alive on-chain — async Rust, provider abstraction, production uptime.</p>
+        <span class="repo-link mono">source ↗</span>
+      </a>
+      <a class="repo reveal" href="https://github.com/jjoshm/pi-nousresearch-extension" target="_blank" rel="noopener">
+        <div class="repo-top mono"><span class="repo-lang lang-ts">TypeScript</span><span class="repo-stars">★ 1</span></div>
+        <h3>pi-nousresearch-extension</h3>
+        <p>Provider extension for the pi AI coding-agent ecosystem — OAuth device-code login, token refresh, dynamic model loading against the Nous Research inference API.</p>
+        <span class="repo-link mono">source ↗</span>
+      </a>
+      <a class="repo reveal" href="https://github.com/jjoshm/hashassine" target="_blank" rel="noopener">
+        <div class="repo-top mono"><span class="repo-lang lang-ts">TypeScript</span></div>
+        <h3>hashassine</h3>
+        <p>Smart contracts on NEAR Protocol — a learning exercise in on-chain game logic and contract architecture.</p>
+        <span class="repo-link mono">source ↗</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ══════════ STACK ══════════ -->
+  <section class="section" id="stack">
+    <div class="section-head reveal">
+      <span class="sec-index mono">05</span>
+      <h2>Stack</h2>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="stack-rows">
+      <div class="stack-row reveal">
+        <span class="stack-label mono">languages</span>
+        <div class="chips"><span>TypeScript</span><span>Python</span><span>Rust</span><span>Go</span><span>Solidity</span><span>PHP</span><span>Java</span><span>SQL</span></div>
+      </div>
+      <div class="stack-row reveal">
+        <span class="stack-label mono">frontend</span>
+        <div class="chips"><span>React</span><span>Angular</span><span>Web Components</span><span>Three.js</span><span>HTML5 / CSS3</span></div>
+      </div>
+      <div class="stack-row reveal">
+        <span class="stack-label mono">backend</span>
+        <div class="chips"><span>Node.js</span><span>Python</span><span>Rust</span><span>Symfony</span><span>REST APIs</span><span>PostgreSQL</span></div>
+      </div>
+      <div class="stack-row reveal">
+        <span class="stack-label mono">chain</span>
+        <div class="chips"><span>EVM</span><span>Foundry</span><span>ethers / alloy</span><span>MEV &amp; keeper infra</span><span>NEAR</span></div>
+      </div>
+      <div class="stack-row reveal">
+        <span class="stack-label mono">security</span>
+        <div class="chips"><span>Burp Suite</span><span>OWASP</span><span>fuzzing</span><span>Ghidra-class RE</span><span>binary analysis</span></div>
+      </div>
+      <div class="stack-row reveal">
+        <span class="stack-label mono">ops</span>
+        <div class="chips"><span>Linux</span><span>Docker</span><span>GitHub Actions</span><span>Azure DevOps</span><span>Neovim</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ CONTACT ══════════ -->
+  <section class="section section-contact" id="contact">
+    <div class="section-head reveal">
+      <span class="sec-index mono">06</span>
+      <h2>Contact</h2>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="contact-grid">
+      <div class="reveal">
+        <p class="lead">
+          Open to senior engineering and security roles — worldwide remote, or on-site in
+          the EU. Also happy to talk shop about MEV, agent tooling,
+          or a finding you'd like a second pair of eyes on.
+        </p>
+        <p class="pgp-note mono">security-sensitive? ask for my PGP key first.</p>
+      </div>
+      <div class="contact-links">
+        <a class="contact-link reveal" href="https://github.com/jjoshm" target="_blank" rel="noopener">
+          <span class="cl-label mono">github</span><span class="cl-value">jjoshm</span><span class="cl-arrow">↗</span>
+        </a>
+        <a class="contact-link reveal" href="https://linkedin.com/in/j0sh" target="_blank" rel="noopener">
+          <span class="cl-label mono">linkedin</span><span class="cl-value">in/j0sh</span><span class="cl-arrow">↗</span>
+        </a>
+        <a class="contact-link reveal" href="https://hackerone.com/j0sh" target="_blank" rel="noopener">
+          <span class="cl-label mono">hackerone</span><span class="cl-value">j0sh</span><span class="cl-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
