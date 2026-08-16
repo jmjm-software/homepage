@@ -24,16 +24,26 @@ const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* mobile: cap GPU work — fewer pixels, no MSAA, fewer dust motes */
 const MOBILE = window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
 
+/* pixel budget — the canvas is full-screen; uncapped, a 4K/dpr-2 display
+   renders 14M+ device pixels per frame. Cap total device pixels and skip
+   MSAA when we're downscaling anyway. */
+const PX_BUDGET = 2.5e6;
+const renderScale = Math.min(
+  window.devicePixelRatio,
+  MOBILE ? 1.5 : 2,
+  Math.max(0.6, Math.sqrt(PX_BUDGET / (window.innerWidth * window.innerHeight)))
+);
+
 const canvas = document.getElementById('scene');
 let renderer;
 try {
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: !MOBILE, alpha: false, powerPreference: 'high-performance' });
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: !MOBILE && renderScale >= 1, alpha: false, powerPreference: 'high-performance' });
 } catch (e) {
   canvas.style.display = 'none';
   window.__stackProgress = 0;
   throw e;
 }
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, MOBILE ? 1.5 : 2));
+renderer.setPixelRatio(renderScale);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0x070a0d, 1);
 

@@ -471,10 +471,9 @@ p strong { color: var(--amber); font-weight: 600; }
   align-items: start;
 }
 .stat-stack { display: flex; flex-direction: column; gap: 14px; }
-.stat, .tl-card, .vuln, .sec-card, .repo, .contact-link {
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
-}
+/* panels are 96% opaque (--panel), so backdrop blur is imperceptible — and
+   dropping it avoids re-blurring the live WebGL canvas behind ~30 cards on
+   every frame, which was the main frame-rate killer */
 .stat {
   border: 1px solid var(--line);
   border-left: 3px solid var(--amber);
@@ -707,8 +706,6 @@ p strong { color: var(--amber); font-weight: 600; }
   padding: 22px 26px;
   border: 1px solid var(--line);
   background: var(--panel);
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .stack-row:hover {
