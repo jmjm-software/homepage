@@ -699,15 +699,22 @@ p strong { color: var(--amber); font-weight: 600; }
 .repo:hover .repo-link { color: var(--amber); letter-spacing: 0.16em; }
 
 /* stack */
-.stack-rows { display: flex; flex-direction: column; }
+.stack-rows { display: flex; flex-direction: column; gap: 14px; }
 .stack-row {
   display: flex;
   align-items: baseline;
   gap: 28px;
-  padding: 20px 0;
-  border-bottom: 1px solid var(--line);
+  padding: 22px 26px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.stack-row:first-child { border-top: 1px solid var(--line); }
+.stack-row:hover {
+  border-color: var(--line-strong);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
+}
 .stack-label {
   min-width: 110px;
   font-size: 12px;
