@@ -81,6 +81,25 @@ window.addEventListener('scroll', () => {
   topbar.classList.toggle('scrolled', window.scrollY > 40);
 }, { passive: true });
 
+/* ── mobile drawer nav ── */
+const navToggle = document.getElementById('nav-toggle');
+const mobileNav = document.getElementById('mobile-nav');
+let navOpen = false;
+
+function setNav(open) {
+  navOpen = open;
+  navToggle.setAttribute('aria-expanded', String(open));
+  navToggle.setAttribute('aria-label', open ? 'close menu' : 'open menu');
+  mobileNav.classList.toggle('open', open);
+  mobileNav.inert = !open;
+  document.body.style.overflow = open ? 'hidden' : '';
+  if (open) mobileNav.querySelector('a').focus();
+}
+navToggle.addEventListener('click', () => setNav(!navOpen));
+mobileNav.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setNav(false)));
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && navOpen) setNav(false); });
+window.addEventListener('resize', () => { if (navOpen && window.innerWidth > 1000) setNav(false); });
+
 /* ── depth rail ── */
 const railFill = document.getElementById('rail-fill');
 const railDot = document.getElementById('rail-dot');
@@ -95,12 +114,24 @@ function updateRail() {
 (function railLoop() { updateRail(); requestAnimationFrame(railLoop); })();
 
 /* ── hero parallax fade ── */
+// Fade is tied to how far the hero section has actually scrolled out of view —
+// not to raw scrollY — so on short mobile viewports the text stays readable
+// instead of vanishing within the first screen of scrolling.
+const hero = document.querySelector('.hero');
 const heroInner = document.querySelector('.hero-inner');
 const scrollHint = document.querySelector('.scroll-hint');
 window.addEventListener('scroll', () => {
-  const y = window.scrollY;
-  const f = Math.max(0, 1 - y / (window.innerHeight * 0.75));
+  const rect = hero.getBoundingClientRect();
+  const h = Math.max(rect.height, window.innerHeight);
+  const p = Math.min(1, Math.max(0, -rect.top / h)); // 0 = hero fills screen · 1 = fully scrolled past
+  if (REDUCED) {
+    heroInner.style.opacity = 1;
+    heroInner.style.transform = 'none';
+    scrollHint.style.opacity = 1;
+    return;
+  }
+  const f = Math.max(0, 1 - (p - 0.33) / 0.67); // fully opaque until ⅓ of the hero has scrolled out
   heroInner.style.opacity = f;
-  heroInner.style.transform = `translateY(${y * 0.18}px)`;
-  scrollHint.style.opacity = Math.max(0, 1 - y / 240);
+  heroInner.style.transform = `translateY(${p * 90}px)`;
+  scrollHint.style.opacity = Math.max(0, 1 - p * 1.6);
 }, { passive: true });

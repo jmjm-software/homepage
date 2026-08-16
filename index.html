@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Josh — Software Developer & IT Security Researcher</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Josh Münte — Software Developer & IT Security Researcher</title>
 <meta name="description" content="Josh Münte builds full-stack products and takes them apart. 7+ years across TypeScript, Rust, Go, Solidity and EVM internals — with an offensive security edge.">
 <meta name="theme-color" content="#070a0d">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23070a0d'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='16' fill='%23ff6b35' text-anchor='middle'%3E%24_%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap"></noscript>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -39,7 +39,22 @@
     <a href="#stack">stack</a>
   </nav>
   <a class="topbar-cta" href="#contact">get in touch</a>
+  <button id="nav-toggle" class="nav-toggle" aria-label="open menu" aria-expanded="false" aria-controls="mobile-nav">
+    <span class="nav-toggle-bar"></span>
+    <span class="nav-toggle-bar"></span>
+    <span class="nav-toggle-bar"></span>
+  </button>
 </header>
+
+<!-- mobile drawer navigation -->
+<nav id="mobile-nav" aria-label="sections" inert>
+  <a href="#profile"><span class="idx">01</span>profile</a>
+  <a href="#experience"><span class="idx">02</span>experience</a>
+  <a href="#security"><span class="idx">03</span>security</a>
+  <a href="#opensource"><span class="idx">04</span>open&nbsp;source</a>
+  <a href="#stack"><span class="idx">05</span>stack</a>
+  <a class="mobile-nav-cta" href="#contact">get in touch</a>
+</nav>
 
 <main id="top">
 

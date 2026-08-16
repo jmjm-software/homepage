@@ -21,16 +21,19 @@ import * as THREE from './vendor/three.module.min.js';
 
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* mobile: cap GPU work — fewer pixels, no MSAA, fewer dust motes */
+const MOBILE = window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+
 const canvas = document.getElementById('scene');
 let renderer;
 try {
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: !MOBILE, alpha: false, powerPreference: 'high-performance' });
 } catch (e) {
   canvas.style.display = 'none';
   window.__stackProgress = 0;
   throw e;
 }
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, MOBILE ? 1.5 : 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0x070a0d, 1);
 
@@ -291,7 +294,7 @@ let lockT = 0;
 const lockPos = new THREE.Vector3();
 
 /* ── ambient dust + floor ── */
-const DUST = 550;
+const DUST = MOBILE ? 220 : 550;
 const dustGeo = new THREE.BufferGeometry();
 const dustPos = new Float32Array(DUST * 3);
 for (let i = 0; i < DUST; i++) {
@@ -321,10 +324,13 @@ window.addEventListener('scroll', readScroll, { passive: true });
 readScroll();
 
 let mx = 0, my = 0, smx = 0, smy = 0;
-window.addEventListener('pointermove', (e) => {
-  mx = (e.clientX / window.innerWidth) * 2 - 1;
-  my = (e.clientY / window.innerHeight) * 2 - 1;
-}, { passive: true });
+// mouse-only parallax — touch scrolling shouldn't steer the camera
+if (window.matchMedia('(pointer: fine)').matches) {
+  window.addEventListener('pointermove', (e) => {
+    mx = (e.clientX / window.innerWidth) * 2 - 1;
+    my = (e.clientY / window.innerHeight) * 2 - 1;
+  }, { passive: true });
+}
 
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
