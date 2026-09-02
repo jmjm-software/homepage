@@ -798,7 +798,14 @@ p strong { color: var(--amber); font-weight: 600; }
   pointer-events: none;
   background: linear-gradient(90deg, rgba(8, 14, 17, 0.92), transparent 14%, transparent 88%, rgba(5, 18, 20, 0.45));
 }
-#votello-type-canvas { width: 100%; height: 100%; display: block; }
+#votello-type-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* soft bottom edge — the looping copy dissolves instead of hard-clipping */
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 26px), transparent);
+  mask-image: linear-gradient(180deg, #000 calc(100% - 26px), transparent);
+}
 .votello-type-hint {
   position: absolute;
   right: 16px;
