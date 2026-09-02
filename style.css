@@ -698,7 +698,7 @@ p strong { color: var(--amber); font-weight: 600; }
 }
 .repo:hover .repo-link { color: var(--amber); letter-spacing: 0.16em; }
 
-/* featured Votello build — live prose routes around the evidence scanner */
+/* featured Votello build — measured ownership labels orbit the pointer */
 .repo-featured {
   grid-column: 1 / -1;
   display: grid;
@@ -801,7 +801,7 @@ p strong { color: var(--amber); font-weight: 600; }
 }
 .votello-type:hover .votello-type-hint { opacity: 0; }
 .votello-type.type-fallback::before {
-  content: "SCAN  ·  TRACE  ·  VERIFY  ·  DECIDE";
+  content: "PRODUCT  →  BRAND  →  COMPANY  →  EVIDENCE";
   position: absolute;
   inset: 0;
   display: grid;
