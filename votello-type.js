@@ -1,5 +1,6 @@
 import {
-  measureNaturalWidth,
+  layoutNextLineRange,
+  materializeLineRange,
   prepareWithSegments,
 } from './vendor/pretext/layout.js';
 
@@ -13,16 +14,13 @@ if (!(stage instanceof HTMLElement) || !(canvas instanceof HTMLCanvasElement)) {
 const ctx = canvas.getContext('2d');
 if (!ctx) throw new Error('Canvas 2D is unavailable');
 
-const FONT = '600 11px "IBM Plex Sans"';
-const CENTER_FONT = '700 10px "IBM Plex Sans"';
+const COPY = 'Scan a product. Trace the companies behind it, from the brand on the package to the parent company at the top of the ownership chain. Explore verified environmental, labor, human-rights, political, tax, supply-chain, and governance signals. Open every source and read the exact evidence behind each claim. Votello keeps uncertainty visible, explains how each signal affects the score, and never turns missing evidence into a clean bill of health. The result is not a shopping verdict. It is a transparent map that helps you decide for yourself.';
+const FONT_DESKTOP = '500 13px "IBM Plex Sans"';
+const FONT_MOBILE = '500 11.5px "IBM Plex Sans"';
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const RING_LABELS = [
-  ['PRODUCT', 'BARCODE', 'CATEGORY'],
-  ['BRAND', 'COMPANY', 'MANUFACTURER', 'OWNER'],
-  ['PARENT', 'SUBSIDIARY', 'SOURCE', 'EVIDENCE', 'SCORE'],
-];
 
-let labels = [];
+let preparedDesktop;
+let preparedMobile;
 let cssWidth = 0;
 let cssHeight = 0;
 let pixelRatio = 1;
@@ -31,13 +29,24 @@ let frameId = 0;
 let pointerActive = false;
 let lastPointerMove = 0;
 const pointer = { x: 0, y: 0 };
-const center = { x: 0, y: 0 };
+const graph = { x: 0, y: 0 };
 
-function prepareLabels() {
-  labels = RING_LABELS.map((ring) => ring.map((text) => {
-    const prepared = prepareWithSegments(text, FONT, { letterSpacing: 1.1 });
-    return { text, width: measureNaturalWidth(prepared) + Math.max(0, text.length - 1) * 1.1 };
-  }));
+function typography() {
+  const mobile = cssWidth < 380;
+  return {
+    font: mobile ? FONT_MOBILE : FONT_DESKTOP,
+    lineHeight: mobile ? 17 : 21,
+    prepared: mobile ? preparedMobile : preparedDesktop,
+    margin: mobile ? 16 : 22,
+  };
+}
+
+function graphSize() {
+  const mobile = cssWidth < 380;
+  return {
+    width: mobile ? 104 : 144,
+    height: mobile ? 88 : 116,
+  };
 }
 
 function resize() {
@@ -50,21 +59,16 @@ function resize() {
   canvas.style.width = `${cssWidth}px`;
   canvas.style.height = `${cssHeight}px`;
   ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-  if (!center.x) {
-    center.x = cssWidth * 0.55;
-    center.y = cssHeight * 0.5;
+  if (!graph.x) {
+    graph.x = cssWidth * 0.72;
+    graph.y = cssHeight * 0.49;
   }
   draw(performance.now());
 }
 
-function ringRadii() {
-  const maxRadius = Math.min(cssWidth, cssHeight) * 0.43;
-  return [maxRadius * 0.38, maxRadius * 0.68, maxRadius];
-}
-
-function drawGrid() {
+function drawBackdrop() {
   ctx.lineWidth = 1;
-  ctx.strokeStyle = 'rgba(70,214,140,0.045)';
+  ctx.strokeStyle = 'rgba(70,214,140,0.035)';
   for (let x = 18; x < cssWidth; x += 32) {
     ctx.beginPath();
     ctx.moveTo(x, 0);
@@ -77,129 +81,132 @@ function drawGrid() {
     ctx.lineTo(cssWidth, y);
     ctx.stroke();
   }
-}
 
-function drawRipple(time, maxRadius) {
-  if (reduced) return;
-  const progress = (time * 0.00016) % 1;
-  const radius = maxRadius * (0.25 + progress * 1.05);
-  ctx.strokeStyle = `rgba(70,214,140,${(1 - progress) * 0.16})`;
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
-  ctx.stroke();
-}
-
-function drawLabel(label, angle, radius, ringIndex) {
-  const x = center.x + Math.cos(angle) * radius;
-  const y = center.y + Math.sin(angle) * radius;
-  let rotation = angle + Math.PI / 2;
-  if (Math.cos(angle) < 0) rotation += Math.PI;
-
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(rotation);
-  const alpha = 0.68 - ringIndex * 0.08;
-  const padX = 6;
-  const boxWidth = label.width + padX * 2;
-  ctx.fillStyle = 'rgba(5,18,20,0.88)';
-  ctx.fillRect(-boxWidth / 2, -9, boxWidth, 17);
-  ctx.strokeStyle = ringIndex === 0
-    ? 'rgba(255,180,84,0.42)'
-    : `rgba(70,214,140,${0.22 - ringIndex * 0.035})`;
-  ctx.strokeRect(-boxWidth / 2, -9, boxWidth, 17);
-  ctx.font = FONT;
-  ctx.letterSpacing = '1.1px';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = ringIndex === 0
-    ? `rgba(255,180,84,${alpha + 0.08})`
-    : `rgba(217,228,226,${alpha})`;
-  ctx.fillText(label.text, 0, 0);
-  ctx.restore();
-
-  return { x, y };
-}
-
-function drawRings(time, radii) {
-  const speed = reduced ? 0 : time * 0.00008;
-  radii.forEach((radius, ringIndex) => {
-    ctx.strokeStyle = `rgba(70,214,140,${0.23 - ringIndex * 0.045})`;
-    ctx.lineWidth = ringIndex === 0 ? 1.25 : 1;
-    ctx.setLineDash(ringIndex === 1 ? [3, 5] : []);
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    const ring = labels[ringIndex];
-    const direction = ringIndex % 2 === 0 ? 1 : -1;
-    const offset = speed * direction * (1.15 - ringIndex * 0.18) + ringIndex * 0.7;
-    ring.forEach((label, labelIndex) => {
-      const angle = offset + (labelIndex / ring.length) * Math.PI * 2;
-      const point = drawLabel(label, angle, radius, ringIndex);
-      if (ringIndex === 0) {
-        ctx.strokeStyle = 'rgba(255,180,84,0.12)';
-        ctx.beginPath();
-        ctx.moveTo(center.x, center.y);
-        ctx.lineTo(point.x, point.y);
-        ctx.stroke();
-      }
-    });
-  });
-}
-
-function drawCore(time) {
-  const pulse = reduced ? 0 : Math.sin(time * 0.0026) * 2;
-  const radius = 20 + pulse;
-  const glow = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, 46);
-  glow.addColorStop(0, 'rgba(70,214,140,0.22)');
+  const glow = ctx.createRadialGradient(graph.x, graph.y, 0, graph.x, graph.y, 150);
+  glow.addColorStop(0, 'rgba(70,214,140,0.095)');
   glow.addColorStop(1, 'rgba(70,214,140,0)');
   ctx.fillStyle = glow;
-  ctx.beginPath();
-  ctx.arc(center.x, center.y, 46, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.fillRect(0, 0, cssWidth, cssHeight);
+}
 
-  ctx.save();
-  ctx.translate(center.x, center.y);
-  ctx.rotate(Math.PI / 4);
-  ctx.fillStyle = 'rgba(5,24,25,0.96)';
-  ctx.strokeStyle = 'rgba(70,214,140,0.9)';
-  ctx.lineWidth = 1.3;
-  ctx.fillRect(-radius, -radius, radius * 2, radius * 2);
-  ctx.strokeRect(-radius, -radius, radius * 2, radius * 2);
-  ctx.restore();
+function drawCopy() {
+  const { font, lineHeight, prepared, margin } = typography();
+  if (!prepared) return;
 
-  ctx.font = CENTER_FONT;
-  ctx.letterSpacing = '1.2px';
+  const size = graphSize();
+  const graphLeft = graph.x - size.width / 2;
+  const graphTop = graph.y - size.height / 2;
+  const graphBottom = graph.y + size.height / 2;
+  const textTop = cssWidth < 380 ? 21 : 30;
+  const textBottom = cssHeight - 15;
+  const gap = cssWidth < 380 ? 12 : 18;
+
+  ctx.font = font;
+  ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = 'left';
+  ctx.letterSpacing = '0.15px';
+
+  let cursor = { segmentIndex: 0, graphemeIndex: 0 };
+  let lineIndex = 0;
+  for (let y = textTop; y < textBottom; y += lineHeight) {
+    const lineBandTop = y - lineHeight * 0.78;
+    const lineBandBottom = y + lineHeight * 0.18;
+    const hitsGraph = lineBandBottom >= graphTop && lineBandTop <= graphBottom;
+    const maxWidth = hitsGraph
+      ? graphLeft - gap - margin
+      : cssWidth - margin * 2;
+
+    if (maxWidth < 105) continue;
+    const range = layoutNextLineRange(prepared, cursor, maxWidth);
+    if (!range) break;
+    const line = materializeLineRange(prepared, range);
+
+    const keyLine = /^(Scan|Trace|Explore|Open|Votello|The result)/.test(line.text);
+    ctx.fillStyle = keyLine
+      ? 'rgba(70,214,140,0.9)'
+      : `rgba(217,228,226,${0.62 + (lineIndex % 3) * 0.055})`;
+    ctx.fillText(line.text, margin, y);
+
+    cursor = range.end;
+    lineIndex += 1;
+  }
+}
+
+function drawNode(x, y, label, active = false) {
+  const width = cssWidth < 380 ? 45 : 58;
+  const height = cssWidth < 380 ? 20 : 24;
+  ctx.fillStyle = active ? 'rgba(70,214,140,0.16)' : 'rgba(5,18,20,0.96)';
+  ctx.strokeStyle = active ? 'rgba(70,214,140,0.92)' : 'rgba(90,215,224,0.48)';
+  ctx.lineWidth = active ? 1.4 : 1;
+  ctx.fillRect(x - width / 2, y - height / 2, width, height);
+  ctx.strokeRect(x - width / 2, y - height / 2, width, height);
+  ctx.font = cssWidth < 380 ? '700 7px "IBM Plex Sans"' : '700 8.5px "IBM Plex Sans"';
+  ctx.letterSpacing = '0.8px';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillStyle = 'rgba(70,214,140,0.95)';
-  ctx.fillText('PRODUCT', center.x, center.y - 5);
-  ctx.font = '500 8px "IBM Plex Sans"';
-  ctx.letterSpacing = '1px';
-  ctx.fillStyle = 'rgba(127,146,150,0.8)';
-  ctx.fillText('TRACE', center.x, center.y + 8);
+  ctx.fillStyle = active ? 'rgba(70,214,140,0.98)' : 'rgba(217,228,226,0.76)';
+  ctx.fillText(label, x, y + 0.5);
+}
+
+function drawGraph(time) {
+  const size = graphSize();
+  const scale = cssWidth < 380 ? 0.72 : 1;
+  const pulse = reduced ? 0 : Math.sin(time * 0.0025) * 1.5;
+  const top = { x: graph.x, y: graph.y - 40 * scale };
+  const left = { x: graph.x - 40 * scale, y: graph.y + 29 * scale };
+  const right = { x: graph.x + 40 * scale, y: graph.y + 29 * scale };
+
+  ctx.save();
+  ctx.setLineDash([3, 5]);
+  ctx.strokeStyle = 'rgba(70,214,140,0.22)';
+  ctx.strokeRect(
+    graph.x - size.width / 2 - pulse,
+    graph.y - size.height / 2 - pulse,
+    size.width + pulse * 2,
+    size.height + pulse * 2,
+  );
+  ctx.restore();
+
+  ctx.strokeStyle = 'rgba(70,214,140,0.35)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(top.x, top.y + 12 * scale);
+  ctx.lineTo(left.x, left.y - 10 * scale);
+  ctx.moveTo(top.x, top.y + 12 * scale);
+  ctx.lineTo(right.x, right.y - 10 * scale);
+  ctx.stroke();
+
+  const travel = reduced ? 0.5 : (time * 0.0003) % 1;
+  for (const target of [left, right]) {
+    const x = top.x + (target.x - top.x) * travel;
+    const y = top.y + (target.y - top.y) * travel;
+    ctx.fillStyle = 'rgba(255,180,84,0.9)';
+    ctx.beginPath();
+    ctx.arc(x, y, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  drawNode(top.x, top.y, 'PRODUCT', true);
+  drawNode(left.x, left.y, 'BRAND');
+  drawNode(right.x, right.y, 'OWNER');
 }
 
 function draw(time) {
-  if (!labels.length || !cssWidth || !cssHeight) return;
+  if (!preparedDesktop || !preparedMobile || !cssWidth || !cssHeight) return;
   ctx.clearRect(0, 0, cssWidth, cssHeight);
-  drawGrid();
 
-  const idleX = cssWidth * (0.55 + Math.sin(time * 0.00038) * 0.08);
-  const idleY = cssHeight * (0.5 + Math.cos(time * 0.00044) * 0.08);
-  const recentlyMoved = performance.now() - lastPointerMove < 1800;
+  const idleX = cssWidth * (0.72 + Math.sin(time * 0.00034) * 0.045);
+  const idleY = cssHeight * (0.49 + Math.cos(time * 0.00042) * 0.09);
+  const recentlyMoved = performance.now() - lastPointerMove < 1700;
   const targetX = pointerActive && recentlyMoved ? pointer.x : idleX;
   const targetY = pointerActive && recentlyMoved ? pointer.y : idleY;
   const ease = reduced ? 1 : 0.075;
-  center.x += (targetX - center.x) * ease;
-  center.y += (targetY - center.y) * ease;
+  graph.x += (targetX - graph.x) * ease;
+  graph.y += (targetY - graph.y) * ease;
 
-  const radii = ringRadii();
-  drawRipple(time, radii[2]);
-  drawRings(time, radii);
-  drawCore(time);
+  drawBackdrop();
+  drawCopy();
+  drawGraph(time);
 }
 
 function animate(time) {
@@ -209,10 +216,11 @@ function animate(time) {
 
 stage.addEventListener('pointermove', (event) => {
   const rect = stage.getBoundingClientRect();
-  const radii = ringRadii();
-  const edge = radii[2] + 14;
-  pointer.x = Math.max(edge, Math.min(cssWidth - edge, event.clientX - rect.left));
-  pointer.y = Math.max(edge, Math.min(cssHeight - edge, event.clientY - rect.top));
+  const size = graphSize();
+  const rawX = (event.clientX - rect.left) / Math.max(1, rect.width);
+  const rawY = (event.clientY - rect.top) / Math.max(1, rect.height);
+  pointer.x = cssWidth * (0.6 + rawX * 0.18);
+  pointer.y = Math.max(size.height * 0.62, Math.min(cssHeight - size.height * 0.62, rawY * cssHeight));
   pointerActive = event.pointerType === 'mouse' || event.pointerType === 'pen';
   lastPointerMove = performance.now();
   if (pointerActive) draw(lastPointerMove);
@@ -229,6 +237,10 @@ new IntersectionObserver(([entry]) => {
   }
 }, { rootMargin: '120px' }).observe(stage);
 
-await Promise.all([document.fonts.load(FONT), document.fonts.load(CENTER_FONT)]);
-prepareLabels();
+await Promise.all([
+  document.fonts.load(FONT_DESKTOP),
+  document.fonts.load(FONT_MOBILE),
+]);
+preparedDesktop = prepareWithSegments(COPY, FONT_DESKTOP, { letterSpacing: 0.15 });
+preparedMobile = prepareWithSegments(COPY, FONT_MOBILE, { letterSpacing: 0.15 });
 resize();

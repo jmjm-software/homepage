@@ -46,6 +46,17 @@ body {
 a { color: inherit; text-decoration: none; }
 
 .mono { font-family: var(--font-mono); }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 /* fixed 3D canvas behind everything */
 #scene {
@@ -698,7 +709,7 @@ p strong { color: var(--amber); font-weight: 600; }
 }
 .repo:hover .repo-link { color: var(--amber); letter-spacing: 0.16em; }
 
-/* featured Votello build — measured ownership labels orbit the pointer */
+/* featured Votello build — its story reflows around a live ownership graph */
 .repo-featured {
   grid-column: 1 / -1;
   display: grid;
@@ -801,7 +812,7 @@ p strong { color: var(--amber); font-weight: 600; }
 }
 .votello-type:hover .votello-type-hint { opacity: 0; }
 .votello-type.type-fallback::before {
-  content: "PRODUCT  →  BRAND  →  COMPANY  →  EVIDENCE";
+  content: "Scan a product. Trace who owns it. Read the evidence. Decide for yourself.";
   position: absolute;
   inset: 0;
   display: grid;
@@ -916,7 +927,7 @@ p strong { color: var(--amber); font-weight: 600; }
   .repo-featured-copy { padding: 26px 24px 24px; }
   .repo-featured .repo-top { justify-content: flex-start; gap: 12px; }
   .repo-featured .repo-featured-title h3 { font-size: 28px; }
-  .votello-type { min-height: 260px; }
+  .votello-type { min-height: 300px; }
   .votello-type-hint { display: none; }
 }
 @media (max-width: 480px) {
