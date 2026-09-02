@@ -257,6 +257,7 @@ main { position: relative; z-index: 2; }
 #mobile-nav.open a:nth-child(4) { transition-delay: 0.2s; }
 #mobile-nav.open a:nth-child(5) { transition-delay: 0.25s; }
 #mobile-nav.open a:nth-child(6) { transition-delay: 0.3s; }
+#mobile-nav.open a:nth-child(7) { transition-delay: 0.35s; }
 #mobile-nav a .idx {
   font-size: 0.62em;
   letter-spacing: 0.2em;
@@ -697,6 +698,122 @@ p strong { color: var(--amber); font-weight: 600; }
 }
 .repo:hover .repo-link { color: var(--amber); letter-spacing: 0.16em; }
 
+/* featured Votello build — live prose routes around the evidence scanner */
+.repo-featured {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.1fr);
+  min-height: 390px;
+  padding: 0;
+  overflow: hidden;
+  border-color: rgba(70, 214, 140, 0.25);
+  background: linear-gradient(118deg, rgba(8, 14, 17, 0.99) 0 48%, rgba(5, 24, 25, 0.98) 100%);
+}
+.repo-featured:hover { transform: translateY(-3px); border-color: rgba(70, 214, 140, 0.52); }
+.repo-featured::before { border-color: var(--green); }
+.repo-featured-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 34px 30px;
+}
+.repo-featured .repo-top { color: var(--dim); }
+.repo-featured .repo-top > span { white-space: nowrap; }
+.repo-featured-label { color: var(--green); font-size: 10px; }
+.repo-featured-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 10px 0 18px;
+}
+.repo-featured-title img {
+  width: 54px;
+  height: 54px;
+  border-radius: 13px;
+  box-shadow: 0 0 30px rgba(70, 214, 140, 0.18);
+}
+.repo-featured-title span {
+  display: block;
+  color: var(--green);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.repo-featured .repo-featured-title h3 {
+  margin: 2px 0 0;
+  font-family: var(--font-display);
+  font-size: 32px;
+  letter-spacing: -0.02em;
+}
+.repo-featured-copy > p { max-width: 520px; font-size: 15.5px; }
+.repo-featured-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 24px;
+}
+.repo-featured-actions a {
+  padding: 9px 13px;
+  border: 1px solid rgba(70, 214, 140, 0.32);
+  color: var(--green);
+  font-size: 11.5px;
+  letter-spacing: 0.07em;
+  transition: color 0.2s, background 0.2s, border-color 0.2s, transform 0.2s;
+}
+.repo-featured-actions a:first-child { background: rgba(70, 214, 140, 0.08); }
+.repo-featured-actions a:hover {
+  color: #07100e;
+  background: var(--green);
+  border-color: var(--green);
+  transform: translateY(-2px);
+}
+.votello-type {
+  position: relative;
+  min-width: 0;
+  min-height: 390px;
+  overflow: hidden;
+  border-left: 1px solid rgba(70, 214, 140, 0.15);
+  background:
+    radial-gradient(circle at 56% 48%, rgba(70, 214, 140, 0.09), transparent 35%),
+    linear-gradient(90deg, rgba(5, 18, 20, 0.25), rgba(3, 26, 27, 0.72));
+  cursor: crosshair;
+}
+.votello-type::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(8, 14, 17, 0.92), transparent 14%, transparent 88%, rgba(5, 18, 20, 0.45));
+}
+#votello-type-canvas { width: 100%; height: 100%; display: block; }
+.votello-type-hint {
+  position: absolute;
+  right: 16px;
+  bottom: 13px;
+  z-index: 2;
+  color: rgba(70, 214, 140, 0.55);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: opacity 0.25s;
+}
+.votello-type:hover .votello-type-hint { opacity: 0; }
+.votello-type.type-fallback::before {
+  content: "SCAN  ·  TRACE  ·  VERIFY  ·  DECIDE";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 30px;
+  color: rgba(70, 214, 140, 0.56);
+  font-family: var(--font-mono);
+  font-size: clamp(13px, 1.6vw, 20px);
+  letter-spacing: 0.16em;
+  text-align: center;
+}
+
 /* stack */
 .stack-rows { display: flex; flex-direction: column; gap: 14px; }
 .stack-row {
@@ -778,6 +895,8 @@ p strong { color: var(--amber); font-weight: 600; }
   #topbar nav { display: none; }
   .nav-toggle { display: flex; }
   .profile-grid, .sec-grid, .contact-grid { grid-template-columns: 1fr; gap: 44px; }
+  .repo-featured { grid-template-columns: 1fr; }
+  .votello-type { min-height: 310px; border-left: 0; border-top: 1px solid rgba(70, 214, 140, 0.15); }
 }
 @media (min-width: 1001px) {
   #mobile-nav { display: none; }
@@ -793,6 +912,12 @@ p strong { color: var(--amber); font-weight: 600; }
   .stat { flex-direction: column; gap: 4px; }
   .stack-row { flex-direction: column; gap: 12px; }
   .vuln { flex-direction: column; gap: 10px; }
+  .repo-grid { grid-template-columns: 1fr; }
+  .repo-featured-copy { padding: 26px 24px 24px; }
+  .repo-featured .repo-top { justify-content: flex-start; gap: 12px; }
+  .repo-featured .repo-featured-title h3 { font-size: 28px; }
+  .votello-type { min-height: 260px; }
+  .votello-type-hint { display: none; }
 }
 @media (max-width: 480px) {
   .topbar-cta { display: none; }
@@ -807,6 +932,8 @@ p strong { color: var(--amber); font-weight: 600; }
   }
   .contact-link:hover .cl-arrow { transform: none; }
   .repo:hover::before, .repo:hover::after { width: 14px; height: 14px; border-color: var(--faint); }
+  .repo-featured-actions a:hover { transform: none; }
+  .votello-type-hint { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -814,4 +941,5 @@ p strong { color: var(--amber); font-weight: 600; }
   .reveal { opacity: 1; transform: none; transition: none; }
   #grain, .hint-arrow, .brand-cursor, .term-cursor { animation: none; }
   .nav-toggle-bar, #mobile-nav a { transition: none; }
+  .votello-type-hint { display: none; }
 }

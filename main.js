@@ -7,6 +7,25 @@ import('./scene.js').catch(() => {
   if (c) c.style.display = 'none';
 });
 
+/* Defer the below-the-fold Pretext runtime until its card approaches view. */
+const votelloType = document.getElementById('votello-type');
+if (votelloType) {
+  const loadVotelloType = () => import('./votello-type.js').catch(() => {
+    votelloType.classList.add('type-fallback');
+  });
+
+  if ('IntersectionObserver' in window) {
+    const typeLoader = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      typeLoader.disconnect();
+      loadVotelloType();
+    }, { rootMargin: '400px 0px' });
+    typeLoader.observe(votelloType);
+  } else {
+    loadVotelloType();
+  }
+}
+
 /* ── hero terminal typing ── */
 const TERM_LINES = [
   { cls: '', html: '<span class="t-prompt">josh@dev</span><span class="t-out">:~$</span> <span class="t-cmd">whoami --stack</span>' },
