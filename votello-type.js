@@ -110,7 +110,6 @@ function drawText() {
   ctx.textAlign = 'left';
 
   let cursor = { segmentIndex: 0, graphemeIndex: 0 };
-  let lineIndex = 0;
   let cycle = 0;
   const cycleAlpha = [1, 0.7, 0.52, 0.42];
   const topY = mobile ? 24 : 30;
@@ -126,15 +125,15 @@ function drawText() {
       const line = materializeLineRange(prepared, range);
       const repeat = cycleAlpha[Math.min(cycle, cycleAlpha.length - 1)];
 
+      // single green hue, intensity by proximity — no white↔green flips
+      // when the barcode drifts across the paragraph
       const distance = Math.hypot(segment.x + line.width / 2 - barcode.x, y - barcode.y);
       const near = Math.max(0, 1 - distance / 175);
-      ctx.fillStyle = near > 0.08
-        ? `rgba(70,214,140,${(0.4 + near * 0.55) * repeat})`
-        : `rgba(217,228,226,${(0.6 + (lineIndex % 2) * 0.04) * repeat})`;
+      const alpha = (0.55 + near * 0.4) * repeat;
+      ctx.fillStyle = `rgba(70,214,140,${alpha})`;
       ctx.fillText(line.text, segment.x, y);
 
       cursor = range.end;
-      lineIndex += 1;
     }
   }
 }
