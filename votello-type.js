@@ -59,9 +59,11 @@ function barcodeSize() {
 }
 
 function resize() {
-  const rect = stage.getBoundingClientRect();
-  cssWidth = Math.max(1, Math.round(rect.width));
-  cssHeight = Math.max(1, Math.round(rect.height));
+  // clientWidth/Height = padding box, so borders never feed back into the
+  // canvas size (getBoundingClientRect includes borders and caused a +1px
+  // per-frame growth loop on mobile, where the stage has a border-top)
+  cssWidth = Math.max(1, stage.clientWidth);
+  cssHeight = Math.max(1, stage.clientHeight);
   mobile = cssWidth < 380;
   pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = Math.round(cssWidth * pixelRatio);
